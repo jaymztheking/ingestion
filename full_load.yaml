@@ -1,0 +1,44 @@
+SOMETABLE:
+  Run: False
+  Environment: "dev"
+  Source:
+    platform: "someapi"
+    table: "sourcetable"
+    key: "id"
+    audit_cols: []
+  Target:
+    platform: "snowflake"
+    database: "mydb"
+    schema: "myschema"
+    table: "mytable"
+  Load Type: "full"
+
+OTHERTABLE:
+  Run: False
+  Environment: "dev"
+  Source:
+    platform: "someapi"
+    table: "sourcetable"
+    key: "id"
+    audit_cols: []
+  Target:
+    platform: "snowflake"
+    database: "mydb"
+    schema: "myschema"
+    table: "othertable"
+  Load Type: "full"
+
+ANOTHERTABLE:
+  Run: False
+  Environment: "dev"
+  Source:
+    platform: "someapi"
+    table: "sourcetable"
+    key: "id"
+    audit_cols: []
+  Target:
+    platform: "snowflake"
+    database: "mydb"
+    schema: "myschema"
+    table: "anothertable"
+  Load Type: "full"
