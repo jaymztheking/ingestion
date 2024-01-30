@@ -36,9 +36,9 @@ class Snowflake:
                 db.cursor.execute(query)
                 return db.cursor.fetchall()
         except Exception as e:
-            logging.info(f'Query: {query}')
+            logging.debug(f'Query: {query}')
             logging.error(f'Failed to execute query: {e}')
-            return None
+            raise e
     
     def run_script(self, scriptfilepath: str) -> bool:
         try:
@@ -48,9 +48,9 @@ class Snowflake:
                     db.cursor.execute(query)
                     return True
         except Exception as e:
-            logging.info(f'Script: {scriptfilepath}')
+            logging.debug(f'Script: {scriptfilepath}')
             logging.error(f'Failed to execute script: {e}')
-            return False
+            raise e
 
     def truncate(self, table: str) -> bool:
         query = f'TRUNCATE TABLE {table};'
@@ -66,7 +66,6 @@ class Snowflake:
         if results is not None and len(results) > 0:
             return int(results[0][0])
         else:
-            logging.error(f'Failed to retrieve row count for table {table}')
             return None
         
     def get_latest_date(self, table: str, columns: list) -> dt.datetime:
@@ -76,5 +75,4 @@ class Snowflake:
         if results is not None and len(results) > 0:
             return results[0][0]
         else:
-            logging.error(f'Failed to retrieve latest date for table {table}')
             return None

@@ -14,7 +14,7 @@ class S3:
             logging.info(f'File {filepath} uploaded to S3 successfully')
             return True
         except Exception as e:
-            logging.info(f'File: {filepath}')
+            logging.debug(f'File: {filepath}')
             logging.error(f'Failed to upload file to S3: {e}')
             return False
         
@@ -28,10 +28,10 @@ class S3:
             logging.info(f'Folder {folderpath} uploaded to S3 successfully')
             return True
         except Exception as e:
-            logging.info(f'Folder: {folderpath}')
+            logging.debug(f'Folder: {folderpath}')
             logging.error(f'Failed to upload folder to S3: {e}')
 
-    def delete_s3_folder(self, s3folder) -> bool:
+    def delete_s3_folder(self, s3folder: str) -> bool:
         try:
             objects_to_delete = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix=s3folder)
             delete_keys = {'Objects': [{'Key': obj['Key']} for obj in objects_to_delete.get('Contents', [])]}
@@ -39,7 +39,20 @@ class S3:
             logging.info(f'Objects in S3 folder {s3folder} deleted successfully')
             return True
         except Exception as e:
-            logging.info(f'S3 Folder: {s3folder}')
+            logging.debug(f'S3 Folder: {s3folder}')
+            logging.error(f'Failed to delete objects from S3 folder: {e}')
+            return False
+        
+    def move_to_processed(self, s3folder: str) -> bool:
+        try:
+            objects = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix=s3folder)
+            for obj in objects.get('Contents', []):
+                old_key = obj['Key']
+                new_key = old_key.replace(s3folder, 'processed/'+s3folder)
+                self.s3_client.copy_object(Bucket=self.bucket_name, CopySource={'Bucket': self.bucket_name, 'Key': old_key}, Key=new_key)
+                self.s3_client.delete_object(Bucket=self.bucket_name)
+        except Exception as e:
+            logging.debug(f'S3 Object: {old_key}')
             logging.error(f'Failed to delete objects from S3 folder: {e}')
             return False
         
