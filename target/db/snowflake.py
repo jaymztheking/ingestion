@@ -76,3 +76,14 @@ class Snowflake:
             return results[0][0]
         else:
             return None
+        
+    def write_stats_to_table(self, table: str, ingestion_stats: dict) -> bool:
+        query = f'INSERT INTO {table} VALUES ('
+        for value in ingestion_stats.values():
+            query += str(value)+','
+        query += ');'
+        results = self.run_query(query)
+        if results is not None and len(results) > 0:
+            return True
+        else:
+            return False

@@ -38,7 +38,6 @@ def main():
             logging.error('Failed to load YAML file')
 
     for table in config.keys():
-       
         #Set variables and create dirs when necessary
         results = True
         file_count = 0
@@ -122,7 +121,6 @@ def main():
                 'run_status': 'SUCCESSFUL',
                 'error': 'NA'
             }
-            all_ingestion_stats.append(ingestion_stats)
         except Exception as e:
             end = perf_counter()
             ingestion_stats = {
@@ -131,7 +129,8 @@ def main():
                 'run_status': 'UNSUCCESSFUL',
                 'error': e
             }
-            all_ingestion_stats.append(ingestion_stats)
         
+        target.write_stats_to_table('.'.join([tgt_database, tgt_schema, 'ingestion_stats']), ingestion_stats)
+ 
 if __name__ == '__main__':
     main()
